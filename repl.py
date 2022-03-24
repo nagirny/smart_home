@@ -1,3 +1,4 @@
+from requests.exceptions import *
 import requests
 import pymysql
 import logging
@@ -40,7 +41,11 @@ def repl():
                     # если есть что реплицировать
                     if cur_select.execute(query):
                         for row in cur_select.fetchall():
-                            response = requests.post(conf['host_name'], data=row)  # отправляю данные для записи в базу
+                            try:
+                                response = requests.post(conf['host_name'], data=row)  # отправляю данные для записи в базу
+                            except RequestException:
+                                logger.error('Host connection error: ')
+                                time.sleep(conf['delay'])
                             logger.info(format(response)+", date: "+format(row['date']))
                         # отмечаем строки реплицированными
                         query = "UPDATE sensor_data SET rep=true WHERE rep=false"

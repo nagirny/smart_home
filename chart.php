@@ -63,6 +63,7 @@ input[type="number"]:focus {
 </h2>
 
 <?php
+// TODO: считывать настройки из файла
 $servername = "localhost";
 
 // Здесь указываем название БД
