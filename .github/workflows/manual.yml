@@ -1,6 +1,6 @@
 name: Hello
 
-on: [push]
+on: [pull]
 
 jobs:
   Hello:
