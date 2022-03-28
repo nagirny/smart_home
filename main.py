@@ -34,13 +34,42 @@ def device_listen():
             cursorclass=DictCursor
         ) as connection:
             while True:
+                # загружаем список невыполненных команд
+                query = "SELECT devices.address addr, controls.name name, command, id_command "\
+                        "FROM commands, controls, devices " \
+                        "WHERE commands.id_control=controls.id_control AND controls.id_device=devices.id_device " \
+                        "AND commands.run=0 FOR UPDATE"
+                with connection.cursor() as cur_select:
+                    cur_select.execute(query)
+                for row in cur_select.fetchall():   # по каждому устройству
+                    try:
+                        # отправляем команду на устройство
+                        response = requests.get('http://%s/act?%s=%s' % (row['addr'], row['name'], row['command']))
+                        logger.info(response.text)
+                        # если комманда отправлена
+                        if response.status_code == 200:
+                            # отмечаем в базе исполнение
+                            query = "UPDATE commands SET run=1, date_run=NOW() WHERE id_command=%s" % (row['id_command'])
+                            with connection.cursor() as cur_update:
+                                cur_update.execute(query)
+                    except all:
+                        logger.error("Can't connect to device to send command")
+                        time.sleep(conf['app']['delay'])
+                        return 1
+                connection.commit()
+
                 # загружаем список устройств
                 query = "SELECT id_device, address FROM devices"
                 with connection.cursor() as cur_select:
                     cur_select.execute(query)
                 for row in cur_select.fetchall():   # по каждому устройству
-                    response = requests.get('http://%s/all' % (row['address']))  # получаем данные с устройства
-                    logger.info(response.text)
+                    try:
+                        response = requests.get('http://%s/all' % (row['address']))  # получаем данные с устройства
+                        logger.info(response.text)
+                    except all:
+                        logger.error("Can't connect to device")
+                        time.sleep(conf['app']['delay'])
+                        return 1
 
                     # записываем данные в таблицу info
                     query = "INSERT INTO info (date, id_device, json) VALUES(CURRENT_TIMESTAMP, %s, '%s')" \
@@ -65,15 +94,19 @@ def device_listen():
                             logger.error("Wrong data: " + str(d))
                     connection.commit()
                     time.sleep(conf['app']['delay'])
+        return 0
 
     except pymysql.Error as e:
         print(e)
         logger.error('Connection error: ' + format(e))
+        time.sleep(conf['app']['delay'])
+        return 1
 
 
 def main():
     # запускаем сервер
-    device_listen()
+    while device_listen():
+        logger.info("Restart function")
 
 
 main()
