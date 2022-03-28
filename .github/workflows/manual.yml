@@ -1,4 +1,4 @@
-name: Hello
+name: Инсталляция файлов
 
 on: [push]
 
@@ -10,8 +10,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Hello
-        run: echo "Hello, GitHub Actions!"
-        
       - name: Copy
-        run: cp act.php /var/www/html/
+        run: install.bat
