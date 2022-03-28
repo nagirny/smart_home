@@ -11,4 +11,4 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Copy
-        run: install.bat
+        run: ./install.bat
