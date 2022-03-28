@@ -53,7 +53,6 @@ def repl():
                             cur_upd.execute(query)
                 connection.commit()
                 time.sleep(conf['delay'])
-        return 0
 
     except pymysql.Error as e:
         logger.error('Connection error: ' + format(e))
