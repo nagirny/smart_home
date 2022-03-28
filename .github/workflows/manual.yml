@@ -1,6 +1,6 @@
-name: Hello
+name: Инсталляция файлов
 
-on: [pull]
+on: [push]
 
 jobs:
   Hello:
@@ -10,5 +10,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Hello
-        run: echo "Hello, GitHub Actions!"
+      - name: Copy
+        run: install.bat
