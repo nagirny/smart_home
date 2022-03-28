@@ -66,20 +66,14 @@
 
 <?php
 date_default_timezone_set('Asia/Krasnoyarsk');
-// соединяемся с БД
-$servername = "localhost";
 
-// Здесь указываем название БД
-$dbname = "smart";
-
-// Указываем имя пользователя
-$username = "smart";
-
-// Указываем пароль
-$password = "QAZWSXedc";
+// читаем данные для соединения с БД
+$config = require 'db_conn.php';
+echo $config;
+echo $config['host'];
 
 // Создаем соединение
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($config['host'], $config['user'], $config['password'], $config['database']);
 
 // Проверяем соединение
 if ($conn->connect_error) {
@@ -98,7 +92,7 @@ while ($sens = $res_sens->fetch_object()) {
 	$result = $conn->query($sql);
 	$last=$result->fetch_assoc();
 	// 50 точек на графике
-	$interval = round($result->num_rows/50);
+	$interval = round($result->num_rows/100);
 	$n=0;
 	while ($data = $result->fetch_assoc()){
 		$n++;
