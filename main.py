@@ -41,7 +41,8 @@ def device_listen():
                         "AND commands.run=0 FOR UPDATE"
                 with connection.cursor() as cur_select:
                     cur_select.execute(query)
-                for row in cur_select.fetchall():   # по каждому устройству
+                row = cur_select.fetchone()
+                while row is not None:   # по каждому устройству
                     try:
                         # отправляем команду на устройство
                         response = requests.get('http://%s/act?%s=%s' % (row['addr'], row['name'], row['command']))
@@ -52,6 +53,7 @@ def device_listen():
                             query = "UPDATE commands SET run=1, date_run=NOW() WHERE id_command=%s" % (row['id_command'])
                             with connection.cursor() as cur_update:
                                 cur_update.execute(query)
+                        row = cur_select.fetchone()
                     except all:
                         logger.error("Can't connect to device to send command")
                         time.sleep(conf['app']['delay'])
