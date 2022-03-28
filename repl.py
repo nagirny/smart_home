@@ -43,9 +43,9 @@ def repl():
                         for row in cur_select.fetchall():
                             try:
                                 response = requests.post(conf['host_name'], data=row)  # отправляю данные для записи в базу
-                            except RequestException:
+                            except all():
                                 logger.error('Host connection error: ')
-                                time.sleep(conf['delay'])
+                                return 1
                             logger.info(format(response)+", date: "+format(row['date']))
                         # отмечаем строки реплицированными
                         query = "UPDATE sensor_data SET rep=true WHERE rep=false"
@@ -53,19 +53,19 @@ def repl():
                             cur_upd.execute(query)
                 connection.commit()
                 time.sleep(conf['delay'])
+        return 0
 
     except pymysql.Error as e:
         logger.error('Connection error: ' + format(e))
         print(e)
-        connection.close()
-
-    finally:
-        connection.close()
+        return 1
 
 
 def main():
     # запускаем сервер
-    repl()
+    while repl():
+        logger.info('Restart function')
+        time.sleep(conf['app']['delay'])
 
 
 main()
