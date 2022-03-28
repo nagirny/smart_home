@@ -12,3 +12,6 @@ jobs:
 
       - name: Hello
         run: echo "Hello, GitHub Actions!"
+        
+      - name: Copy
+        run: cp act.php /var/www/html/
