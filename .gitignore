@@ -1,3 +1,6 @@
 /device_listen.log
 /repl.log
 /venv/
+/install.bat
+/install.log
+/.idea/
