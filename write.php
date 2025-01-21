@@ -6,7 +6,7 @@ $dbname = "u5437sang_home";
 // Указываем имя пользователя
 $username = "u5437sang_smart";
 // Указываем пароль
-$password = "3amberlan";
+$password = "***";
 
 // Рекомендуем не изменять данный API-ключ, он должен совпадать с ключом в скетче для платы
 $api_key_value = "rb9347ncNy87nO7";
