@@ -5,7 +5,7 @@
 
 /* Установите здесь свои SSID и пароль */
 const char* ssid = "kv189";  // SSID
-const char* password = "123467890"; // пароль
+const char* password = "****"; // пароль
 
 #define DHTTYPE DHT11                                   // Используемый датчик DHT 11
 uint8_t DHTPin = D2;                                       // Пин к которому подключен датчик
